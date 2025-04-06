@@ -1,0 +1,241 @@
+import random
+import sys
+import os
+
+
+# message to modders: Hello, If you are here to mod the game, here are some guidelines you should follow:
+# 1. to not break the code, don't touch things that are labled as VIDT this means "Very Important Don't Touch"
+# 2. do not try to use chatgpt to just rewrite it, this is highly personal code. Chatgpt might have a stroke trying to read this
+# 3. have fun and learn, I made this game in a week and it took a lot of effort to get working. I've posted the sourcecode for people to learn and grow as programmers.
+
+
+
+
+# Main variables
+day = 0
+quota = random.randint(200, 350)
+starting_cash = random.randint(50, 150)
+shop_inv = []
+trading_ship_lvl = 0
+buying_stock = ['Alcohol', 'Tea', 'Salt', 'Fine China', 'Textiles']
+unlockable_stock = ['Weapons', 'Tin', 'Gold', 'Rice', 'Opium', 'Sugar']
+unlockable_prices = [20, 30, 90, 8, 15, 23]
+unlockables_obtained = []
+stock_prices = [5, 7, 1, 50, 10]
+player_money = starting_cash
+
+# Random name data
+rnf = ['Aiman', 'Nurul', 'Syafiq', 'Farah', 'Amirul', 'Arjun', 'Priya', 'Ravi', 'Ananya', 'Kiran',
+       'Zhang', 'Chen', 'Wang', 'Huang', 'James', 'Emily', 'Oliver', 'Charlotte', 'Daniel', 'Sans'] # random first names
+rnl = ['Hakim', 'Izzah', 'Rahman', 'Nadia', 'Faiz', 'Patel', 'Sharma', 'Kumar', 'Hamiz', 'Mehta',
+       'Mei', 'Jia Hao', 'Li Na', 'Zhen', 'Taylor', 'Clarke', 'Smith', 'Brown', 'Evans', 'Papyrus'] # random last names
+dfb = ['really wants', 'wants to buy', 'haggles for', 'wants you to sell them', 'wants'] # dialogues for buying
+dfi = ['Hi, my name is', 'The name\'s', 'Hello sir, my name is', 'Hey, my name is', 'Let me introduce myself, I am'] # dialogues for introducing
+dfbo = ['don\'t talk to me, I\'m busy', 'I heard people were getting robbed here! Best to be careful...',
+        'I heard the nasi lemak here was amazing!', 'Shut up you dolt! I\'m trying to browse',
+        'And erm, do you have any spices?', 'Are you going to the mosque tomorrow?', 'You will adopt a kitten in 65 days', 'Nyehehe'] # dialogues for the body of a conversation
+
+# Pause function
+def pause():
+    input("Press ENTER to continue...\n")
+
+# Stock purchasing
+def stock_choices(money):
+    print("\n-- Buying Stock --")
+    print("Which stock do you buy?:")
+    for i, item in enumerate(buying_stock):
+        print(f" {i+1}. {item}: RM {stock_prices[i]}")
+    try:
+        stock_choice = int(input("Please pick a product: ")) - 1
+        if 0 <= stock_choice < len(buying_stock):
+            price = stock_prices[stock_choice]
+            if money >= price:
+                chosen_item = buying_stock[stock_choice]
+                shop_inv.append(chosen_item)
+                money -= price
+                print(f"You bought: {chosen_item}")
+                print(f"Current shop inventory: {shop_inv}")
+            else:
+                print("You don't have enough money for that.")
+        else:
+            print("Invalid choice.")
+    except ValueError:
+        print("Please enter a valid number.")
+    return money
+
+
+def shop_upgrades(shipping_lvl, player_money, buying_stock, unlockable_stock, stock_prices, unlockable_prices):
+    print("\n-- Shop Upgrades -- \nWhat upgrades do you want?")
+    print(" 1. Shipping level 1, unlockables: Weapons, Tin (RM 40)")
+    print(" 2. Shipping level 2, unlockables: Gold, Rice (RM 100)")
+    print(" 3. Shipping level 3, unlockables: Opium, Sugar (RM 160)")
+
+    try:
+        unlocking = int(input("Please choose a shipping level to unlock (1/2/3): "))
+    except ValueError:
+        print("Invalid input. Please enter a number (1, 2, or 3).")
+        return shipping_lvl, player_money, buying_stock, stock_prices
+
+    # Unlocking level 1
+    if unlocking == 1 and shipping_lvl < 1 and player_money >= 40:
+        player_money -= 40
+        shipping_lvl = 1
+        print("Level 1 shipping is open, you can now sell: Weapons & Tin")
+        buying_stock.extend([unlockable_stock[0], unlockable_stock[1]])  # Add Weapons & Tin
+        stock_prices.extend([unlockable_prices[0], unlockable_prices[1]])  # Add prices for Weapons & Tin
+
+    # Unlocking level 2
+    elif unlocking == 2 and shipping_lvl >= 1 and shipping_lvl < 2 and player_money >= 100:
+        player_money -= 100
+        shipping_lvl = 2
+        print("Level 2 shipping is open, you can now sell: Gold & Rice")
+        buying_stock.extend([unlockable_stock[2], unlockable_stock[3]])  # Add Gold & Rice
+        stock_prices.extend([unlockable_prices[2], unlockable_prices[3]])  # Add prices for Gold & Rice
+
+    # Unlocking level 3
+    elif unlocking == 3 and shipping_lvl >= 2 and shipping_lvl < 3 and player_money >= 160:
+        player_money -= 160
+        shipping_lvl = 3
+        print("Highest shipping level obtained! You can now sell: Opium & Sugar")
+        buying_stock.extend([unlockable_stock[4], unlockable_stock[5]])  # Add Opium & Sugar
+        stock_prices.extend([unlockable_prices[4], unlockable_prices[5]])  # Add prices for Opium & Sugar
+
+    # Invalid or already unlocked level
+    else:
+        print("Invalid choice, you either don't have enough money, or you've already unlocked this level.")
+    
+    return shipping_lvl, player_money, buying_stock, stock_prices
+
+
+
+
+
+
+# Customer interaction
+def customer_engine(money):
+    print("\n-- Customer Menu --")
+    print("1. Talk to customers\n2. Tend to buyers\n3. Tell everyone to GET OUT!")
+    try:
+        choice = int(input("Choose an option: "))
+        if choice == 1:
+            print("You look for a customer to talk to...")
+            pause()
+            print("You find someone!")
+            pause()
+            print(f"Person: {random.choice(dfi)} {random.choice(rnf)} {random.choice(rnl)} — {random.choice(dfbo)}")
+            pause()
+        elif choice == 2:
+            if not shop_inv:
+                print("Your shop is empty! No one can buy anything.")
+                return money
+            pause()
+            item = random.choice(shop_inv)
+            print(f"{random.choice(rnf)} {random.choice(rnl)} {random.choice(dfb)} {item}.")
+            try:
+                sell = int(input(f"Sell them {item}? (1 = Yes / 2 = No): "))
+                if sell == 1:
+                    shop_inv.remove(item)
+                    gain = stock_prices[buying_stock.index(item)] + random.randint(10, 23)
+                    print(f"You sold {item} and earned RM {gain}.")
+                    money += gain
+                else:
+                    print("You declined the sale. The customer leaves.")
+            except ValueError:
+                print("Invalid input.")
+        elif choice == 3:
+            print("You yell for everyone to leave. The shop empties out.")
+        else:
+            print("Invalid choice.")
+    except ValueError:
+        print("Invalid input.")
+    return money
+
+# Advance the day
+def day_advance(current_day, money):
+    current_day += 1
+    print("You advance to the next day...")
+    pause()
+    tax_change = random.randint(-30, 50)
+    money += tax_change
+    if tax_change > 0:
+        print(f"You got RM {tax_change} from the tax man.")
+    elif tax_change < 0:
+        print(f"You were taxed RM {-tax_change}.")
+    else:
+        print("The tax man didn't show up today.")
+    return current_day, money
+
+# Game intro
+def opening():
+    print("Welcome to *The Merchant*, a game of finance and money management.")
+    pause()
+    print("Inspired by *The Oregon Trail*, you are a merchant in 1800s Pulau Pinang.")
+    pause()
+    print(f"Your quota to return home is: RM {quota}")
+    pause()
+    print(f"You start with RM {starting_cash}. Good luck!")
+    pause()
+
+# Game loop
+def gameloop():
+    global player_money, day, trading_ship_lvl
+    shop_size = 6
+    while True:
+        print(f"\nDay: {day} | Quota: RM {quota} | Money: RM {player_money}")
+        print("-- Player Menu --")
+        print("1. Buy stock\n2. Check Stats\n3. Tend to customers\n4. Advance day \n5. Upgrade shop\n6. Help")
+        try:
+            choice = int(input("What will you do?: "))
+            if player_money <= 0:
+                print(f"You went bankrupt on day {day}. Game over.")
+                break
+            if player_money >= quota:
+                print(f"You reached your quota of RM {quota} in {day} days! Well done!")
+                print("Check out more games at https://rouzyoqi.itch.io/")
+                print("Would you like to start a new run?: (Y = 1 / N = 2)")
+                restart_game = int(input("awaiting command...: "))
+
+            if choice == 1:
+                player_money = stock_choices(player_money)
+            elif choice == 2:
+                pause()
+                print("-- PLAYER STATS --","\nYour shop inventory:", shop_inv, "\nYour bank account: ", player_money, "\nDay number: ", day, "\nShipping Level: ", trading_ship_lvl)
+            elif choice == 3:
+                player_money = customer_engine(player_money)
+            elif choice == 4:
+                day, player_money = day_advance(day, player_money)
+            elif choice == 5:
+                shop_upgrades(trading_ship_lvl, player_money, buying_stock, unlockable_stock, stock_prices, unlockable_prices)
+            elif choice == 6:
+                print("1. Buy stock to grow your inventory.")
+                print("2. Check your game stats.")
+                print("3. Interact with or sell to customers.")
+                print("4. Advance the day, but taxes may affect your cash!")
+                print("5. Upgrade your shop to allow you to sell more items")
+                print("6. open this menu")
+            else:
+                print("Please choose a valid option.")
+        except ValueError:
+            print("Enter a number.")
+
+# Title screen
+def Start():
+    print("-- The Merchant --")
+    print("1. Play\n2. Credits\n3. Quit")
+    try:
+        menu_choice = int(input("Choose an option: "))
+        if menu_choice == 1:
+            opening()
+            gameloop()
+        elif menu_choice == 2:
+            print("Programming: Rouzyoqi")
+            print("Check out more of my stuff: https://rouzyoqi.itch.io/")
+        elif menu_choice == 3:
+            sys.exit("Goodbye!")
+        else:
+            print("Invalid choice.")
+    except ValueError:
+        print("Please enter a number.")
+
+# Start the game
+Start()
