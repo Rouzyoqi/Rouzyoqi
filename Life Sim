@@ -1,0 +1,55 @@
+import random
+
+
+class person:
+    
+    global people_present
+    people_present = []
+    
+    def people_generator():
+        
+        people_names = ['James', 'Olivia', 'Daniel', 'Emma', 'Michael', 'Sophia', 'David', 'Ava', 'Matthew', 'Lily', 'Joshua', 'Grace', 'Andrew', 'Mia', 'Benjamin', 'Chloe', 'Samuel', 'Ella', 'Ryan', 'Zoe']
+        
+        people_ages = random.randint(1, 85)
+        
+        people_jobs = ['Merchant', 'Blacksmith', 'Baker', 'Scribe', 'Tanner', 'Mason', 'Herald', 'Shepard', 'Brewer', 'Carpenter', 'Miller', 'Cooper', 'Chandler', 'Fletcher']
+        
+        people_present.append(f"name: {random.choice(people_names)} | age: {people_ages} | occupation: {random.choice(people_jobs)}")
+        
+        print(f"{people_present} are now in the flock")
+        print(f"The flock has grown to {len(people_present)} people")
+
+class community:
+    
+    global community_name
+    
+    community_name = 'A town in 1263'
+    
+    def random_name_town():
+        
+        town_names = []
+
+        
+
+
+
+def main_menu():
+    
+    print("\nWelcome to Mideaval Life Sim \n 1. Create Human \n 2. Check on humans \n 3. Name community")
+    
+    option = int(input("Please pick a number (1/2/3): "))
+    
+    if option == 1:
+        person.people_generator()
+    
+    elif option == 2:
+        print(f"the flock is {len(people_present)} big and the people in the flock are: \n{people_present}")
+    
+    elif option == 3:
+        pass
+
+
+# running game
+while True:
+    main_menu()
+
