@@ -1,41 +1,51 @@
 import random
 
 
+
 class person:
     
-    global people_present
     people_present = []
     
     def people_generator():
         
-        people_names = ['James', 'Olivia', 'Daniel', 'Emma', 'Michael', 'Sophia', 'David', 'Ava', 'Matthew', 'Lily', 'Joshua', 'Grace', 'Andrew', 'Mia', 'Benjamin', 'Chloe', 'Samuel', 'Ella', 'Ryan', 'Zoe']
+        people_names = ['James', 'Olivia', 'Daniel', 'Emma', 'Michael', 'Sophia', 'David', 'Ava', 'Matthew', 'Lily', 'Joshua', 'Grace', 'Andrew', 'Mia', 'Benjamin', 'Chloe', 'Samuel', 'Ella', 'Ryan', 'Zoe', 'Firas']
         
         people_ages = random.randint(1, 85)
         
-        people_jobs = ['Merchant', 'Blacksmith', 'Baker', 'Scribe', 'Tanner', 'Mason', 'Herald', 'Shepard', 'Brewer', 'Carpenter', 'Miller', 'Cooper', 'Chandler', 'Fletcher']
+        people_jobs = ['Merchant', 'Blacksmith', 'Baker', 'Scribe', 'Tanner', 'Mason', 'Herald', 'Shepard', 'Brewer', 'Carpenter', 'Miller', 'Cooper', 'Chandler', 'Fletcher', 'Gaylord']
         
         people_present.append(f"name: {random.choice(people_names)} | age: {people_ages} | occupation: {random.choice(people_jobs)}")
         
         print(f"{people_present} are now in the flock")
         print(f"The flock has grown to {len(people_present)} people")
+        
+    def people_needs():
+        
+        people_current_mood = []
+        
+        people_conditions = ['is sick.', 'is happy', 'is bored', 'is angry', 'is pissed', 'is hungry', 'is hungry', 'is scared']
+        
+        
 
 class community:
     
     global community_name
     
-    community_name = 'A town in 1263'
+    community_name = []
     
-    def random_name_town():
+    def town_name():
+        print("please pick a name for your town.")
+        town_potent = input("Town Name: ") # town potential name
         
-        town_names = []
-
+        community_name.clear()
+        community_name.append(town_potent)
         
-
+        return town_potent
 
 
 def main_menu():
     
-    print("\nWelcome to Mideaval Life Sim \n 1. Create Human \n 2. Check on humans \n 3. Name community")
+    print(f"\nWelcome to {community_name} \n 1. Create Human \n 2. Check on humans \n 3. Name community")
     
     option = int(input("Please pick a number (1/2/3): "))
     
@@ -46,10 +56,9 @@ def main_menu():
         print(f"the flock is {len(people_present)} big and the people in the flock are: \n{people_present}")
     
     elif option == 3:
-        pass
+        community.town_name()
 
 
 # running game
 while True:
     main_menu()
-
