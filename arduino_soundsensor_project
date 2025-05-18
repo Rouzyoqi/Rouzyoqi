@@ -1,0 +1,76 @@
+// Pin Definitions
+const int micPin = A0;           // Analog mic input
+const int ledPins[] = {2, 3, 4, 5};  // LED pins (4 LEDs)
+const int numLEDs = 4;           // Total number of LEDs
+const int buzzPin = 11;
+const int threshold1 = 15;
+const int threshold2 = 17;
+const int threshold3 = 19;
+const int threshold4 = 22;
+bool buzzing = false;
+unsigned long buzzStartTime = 0;
+
+// siren control stuff
+ bool sirenActive = false;
+ unsigned long sirenStartTime = 0;
+ unsigned long lastSirenToggleTime = 0;
+ bool sirenOn = false;
+
+void setup() {
+  Serial.begin(9600); // For debugging
+  
+  // Set LED pins as OUTPUT
+  for (int i = 0; i < numLEDs; i++) {
+    pinMode(ledPins[i], OUTPUT);
+  }
+
+  pinMode(micPin, INPUT);
+}
+
+void loop() {
+  int micValue = analogRead(micPin); // Read mic input
+  Serial.println(micValue);          // Debug output
+  
+  // Determine how many LEDs to light up
+  int level = 0;
+  if (micValue > threshold1) level = 1;
+  if (micValue > threshold2) level = 2;
+  if (micValue > threshold3) level = 3;
+  if (micValue > threshold4) level = 4;
+
+  // Update LEDs
+  for (int i = 0; i < numLEDs; i++) {
+    digitalWrite(ledPins[i], i < level ? HIGH : LOW);
+  }
+
+  delay(100); // Small delay to make the LEDs readable
+
+  unsigned long currentTime = millis();
+
+  if (level == 4 && !sirenActive) { // checks for a level 4 reading of sound (| _ |)
+    sirenActive = true;
+    sirenStartTime = currentTime;
+    lastSirenToggleTime = currentTime;
+    sirenOn = true;
+    tone(buzzPin, 1300);
+  }
+
+  // managing siren...
+  if (sirenActive) { // siren logic (-_-)
+    if (currentTime - sirenStartTime >= 300000) { // checks for the sirens "active" state
+      sirenActive = false;
+      noTone(buzzPin);
+    } else if (currentTime - lastSirenToggleTime >= 1500) { // used for the "pause" present
+      sirenOn = !sirenOn;
+      lastSirenToggleTime = currentTime;
+
+      if (sirenOn) { // toggle's the buzzer (siren)
+        tone(buzzPin, 1300);
+      } else {
+        noTone(buzzPin);
+      }
+    }
+  }
+
+  delay(100);
+}
