@@ -70,7 +70,7 @@ class menus:
 humans = people(citizen_names=citizen_names, citizen_traits=citizen_traits, citizens=citizens, current_citizen=current_citizen, human_task=human_task)
 
 while program_run:
-    pass
+    humans.human_create()
 
 while not program_run:
     sys.exit("program quitted")
