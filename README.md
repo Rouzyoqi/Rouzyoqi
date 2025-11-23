@@ -2,4 +2,5 @@
 - Im 14 years old
 - my main programming languages are: python & gdscript
 - I love to code!
+- knows 15 programming languages (and counting...)
 - He/Him
