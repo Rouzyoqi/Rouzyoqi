@@ -1,5 +1,5 @@
 - 👋 Hi, I’m @Rouzyoqi
-- Im 14 years old
+- Born on 12 jan 2011
 - my main programming languages are: python & gdscript
 - I love to code!
 - knows 15 programming languages (and counting...)
